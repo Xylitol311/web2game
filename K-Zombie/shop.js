@@ -58,7 +58,7 @@ class ShopUI {
         this.panel.setDepth(2001);
         
         // Title
-        this.title = this.scene.add.text(centerX, centerY - 170, '상점 (Shop)', {
+        this.title = this.scene.add.text(centerX, centerY - 170, 'Shop', {
             fontSize: '28px',
             color: '#d4a944',
             fontStyle: 'bold'
@@ -68,7 +68,7 @@ class ShopUI {
         this.title.setDepth(2002);
         
         // Coins display
-        this.coinsText = this.scene.add.text(centerX, centerY - 140, `보유 코인: ${GameState.coins}`, {
+        this.coinsText = this.scene.add.text(centerX, centerY - 140, `Your Coins: ${GameState.coins}`, {
             fontSize: '18px',
             color: '#ffd700'
         });
@@ -80,7 +80,7 @@ class ShopUI {
         this.createShopItems(centerX, centerY);
         
         // Instructions
-        this.instructions = this.scene.add.text(centerX, centerY + 170, '[클릭하여 구매] [ESC] 닫기', {
+        this.instructions = this.scene.add.text(centerX, centerY + 170, '[Click to Purchase] [ESC] Close', {
             fontSize: '14px',
             color: '#ffffff'
         });
@@ -136,7 +136,7 @@ class ShopUI {
             // Item name
             const name = this.scene.add.text(
                 centerX - 200, y,
-                isPurchased ? `${item.config.name} (구매완료)` : item.config.name,
+                isPurchased ? `${item.config.name} (Purchased)` : item.config.name,
                 {
                     fontSize: '16px',
                     color: isPurchased ? '#888888' : '#ffffff'
@@ -149,7 +149,7 @@ class ShopUI {
             // Price
             const price = this.scene.add.text(
                 centerX + 200, y,
-                isPurchased ? '' : `${item.config.price} 코인`,
+                isPurchased ? '' : `${item.config.price} Coins`,
                 {
                     fontSize: '16px',
                     color: '#ffd700'
@@ -166,14 +166,14 @@ class ShopUI {
     purchaseItem(itemType, itemConfig) {
         // Check if enough coins
         if (GameState.coins < itemConfig.price) {
-            this.showMessage('코인이 부족합니다!', 0xff0000);
+            this.showMessage('Not enough coins!', 0xff0000);
             return;
         }
         
         // Check if already purchased (one-time items)
         if (itemConfig.oneTime) {
             if (itemType === 'CLOAK' && GameState.hasCloak) {
-                this.showMessage('이미 구매한 아이템입니다!', 0xff0000);
+                this.showMessage('Already purchased!', 0xff0000);
                 return;
             }
         }
@@ -187,32 +187,32 @@ class ShopUI {
             case 'ARROWS':
                 const amount = Phaser.Math.Between(5, 10);
                 this.scene.weaponSystem.addAmmo(amount);
-                this.showMessage(`화살 ${amount}개 획득!`, 0x00ff00);
+                this.showMessage(`Acquired ${amount} Arrows!`, 0x00ff00);
                 break;
                 
             case 'HEAL_POTION':
                 this.scene.itemManager.addToInventory(itemType);
-                this.showMessage('회복 물약 획득!', 0x00ff00);
+                this.showMessage('Acquired Heal Potion!', 0x00ff00);
                 break;
                 
             case 'SPEED_BUFF':
                 this.scene.itemManager.addToInventory(itemType);
-                this.showMessage('속도 강화 획득!', 0x00ff00);
+                this.showMessage('Acquired Speed Buff!', 0x00ff00);
                 break;
                 
             case 'POWER_BUFF':
                 this.scene.itemManager.addToInventory(itemType);
-                this.showMessage('공격 강화 획득!', 0x00ff00);
+                this.showMessage('Acquired Power Buff!', 0x00ff00);
                 break;
                 
             case 'VISION':
                 this.scene.itemManager.addToInventory(itemType);
-                this.showMessage('시야 확장 획득!', 0x00ff00);
+                this.showMessage('Acquired Vision!', 0x00ff00);
                 break;
                 
             case 'CLOAK':
                 this.scene.player.equipCloak();
-                this.showMessage('방어 망토 장착! (30% 피해 감소)', 0x00ff00);
+                this.showMessage('Cloak Equipped! (30% Damage Reduction)', 0x00ff00);
                 // Refresh UI to show as purchased
                 this.close();
                 this.open();
@@ -220,7 +220,7 @@ class ShopUI {
                 
             case 'BOMB_ITEM':
                 this.scene.weaponSystem.unlockBomb();
-                this.showMessage('폭탄 무기 해금!', 0x00ff00);
+                this.showMessage('Bomb Weapon Unlocked!', 0x00ff00);
                 break;
         }
     }
@@ -248,7 +248,7 @@ class ShopUI {
     
     updateCoinsDisplay() {
         if (this.coinsText) {
-            this.coinsText.setText(`보유 코인: ${GameState.coins}`);
+            this.coinsText.setText(`Your Coins: ${GameState.coins}`);
         }
     }
     

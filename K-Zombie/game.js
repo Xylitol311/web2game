@@ -453,10 +453,11 @@ class GameScene extends Phaser.Scene {
     update(time, delta) {
         if (this.gameEnded || this.shopUI.isOpen || this.isPaused) return;
         
-        // Update timer
+        // Update timer (countdown from 2:00 to 0:00)
         GameState.timeElapsed = (Date.now() - this.gameStartTime) / 1000;
-        const minutes = Math.floor(GameState.timeElapsed / 60);
-        const seconds = Math.floor(GameState.timeElapsed % 60);
+        const timeRemaining = Math.max(0, CONFIG.GAME.SURVIVAL_TIME - GameState.timeElapsed);
+        const minutes = Math.floor(timeRemaining / 60);
+        const seconds = Math.floor(timeRemaining % 60);
         this.timerText.setText(`${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
         
         // Check win condition

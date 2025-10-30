@@ -143,7 +143,7 @@ class MapGenerator {
     }
     
     createShops() {
-        const count = CONFIG.MAP.SHOPS; // 항상 정확히 3개
+        const count = CONFIG.MAP.SHOPS; // always exact count
         
         for (let i = 0; i < count; i++) {
             let x, y;
@@ -155,7 +155,7 @@ class MapGenerator {
                 attempts++;
             } while (attempts < 100 && !this.isValidPosition(x, y, 150));
             
-            // 시도 횟수를 늘리고, 실패 시에도 강제로 생성
+            // Force creation if attempts exceeded
             if (attempts >= 100) {
                 x = Phaser.Math.Between(400, CONFIG.WORLD_SIZE - 400);
                 y = Phaser.Math.Between(400, CONFIG.WORLD_SIZE - 400);
@@ -198,7 +198,7 @@ class MapGenerator {
         text.setOrigin(0.5);
         text.setDepth(3);
         
-        // Interaction indicator (항상 표시)
+        // Interaction indicator (always visible)
         const indicator = this.scene.add.text(x, y + height/2 + 10, 'Interact (F)', {
             fontSize: '12px',
             color: '#ffff00',
@@ -246,7 +246,7 @@ class MapGenerator {
             );
             
             if (distance < 80) {
-                shop.indicator.setText('[F] 상점 열기');
+                shop.indicator.setText('[F] Open Shop');
                 shop.indicator.setVisible(true);
                 return { type: 'shop', object: shop };
             } else {

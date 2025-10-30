@@ -67,7 +67,7 @@ class Zombie extends Phaser.Physics.Arcade.Sprite {
             'SHOOTER': 'Shooter'
         };
         
-        this.nameText = this.scene.add.text(this.x, this.y + size/2 + 5, zombieNames[this.zombieType] || '좀비', {
+        this.nameText = this.scene.add.text(this.x, this.y + size/2 + 5, zombieNames[this.zombieType] || 'Zombie', {
             fontSize: '10px',
             color: '#ff6666',
             backgroundColor: '#000000',
@@ -146,6 +146,10 @@ class Zombie extends Phaser.Physics.Arcade.Sprite {
         
         // Move towards player
         this.moveTowardsTarget();
+        
+        // Clamp position to world bounds
+        this.x = Phaser.Math.Clamp(this.x, CONFIG.TILE_SIZE, CONFIG.WORLD_SIZE - CONFIG.TILE_SIZE);
+        this.y = Phaser.Math.Clamp(this.y, CONFIG.TILE_SIZE, CONFIG.WORLD_SIZE - CONFIG.TILE_SIZE);
         
         // Update name text position
         if (this.nameText) {

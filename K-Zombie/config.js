@@ -16,31 +16,31 @@ const CONFIG = {
     // Difficulty settings
     DIFFICULTIES: {
         EASY: {
-            regularZombies: 60,
-            specialZombies: 10,
+            regularZombies: 120, // doubled from 60
+            specialZombies: 20, // doubled from 10
             dropRate: 0.20,
             visionRadius: 256, // 8 units * 32px (5 + 3)
             label: 'Easy',
-            spawnInterval: 8000, // 8초마다 추가 스폰
-            spawnCount: 2 // 한번에 2마리
+            spawnInterval: 8000,
+            spawnCount: 3 // 1.5x from 2
         },
         NORMAL: {
-            regularZombies: 90,
-            specialZombies: 20,
+            regularZombies: 180, // doubled from 90
+            specialZombies: 40, // doubled from 20
             dropRate: 0.12,
             visionRadius: 256, // 8 units * 32px
             label: 'Normal',
-            spawnInterval: 6000, // 6초마다 추가 스폰
-            spawnCount: 3 // 한번에 3마리
+            spawnInterval: 6000,
+            spawnCount: 5 // 1.5x from 3 (rounded)
         },
         HELL: {
-            regularZombies: 120,
-            specialZombies: 30,
+            regularZombies: 240, // doubled from 120
+            specialZombies: 60, // doubled from 30
             dropRate: 0.05,
             visionRadius: 192, // 6 units * 32px (3 + 3)
             label: 'Hell',
-            spawnInterval: 4000, // 4초마다 추가 스폰
-            spawnCount: 4 // 한번에 4마리
+            spawnInterval: 4000,
+            spawnCount: 6 // 1.5x from 4
         }
     },
     
@@ -97,7 +97,7 @@ const CONFIG = {
             name: 'Heal Potion',
             healAmount: 40,
             cooldown: 5000,
-            price: 60
+            price: 30 // halved from 60
         },
         SPEED_BUFF: {
             id: 'speed',
@@ -105,7 +105,7 @@ const CONFIG = {
             multiplier: 1.2,
             duration: 5000,
             cooldown: 5000,
-            price: 40
+            price: 20 // halved from 40
         },
         POWER_BUFF: {
             id: 'power',
@@ -113,32 +113,32 @@ const CONFIG = {
             multiplier: 1.2,
             duration: 5000,
             cooldown: 5000,
-            price: 40
+            price: 20 // halved from 40
         },
         VISION: {
             id: 'vision',
             name: 'Vision',
             radiusIncrease: 32, // 1 unit
             maxStacks: 3,
-            price: 70
+            price: 35 // halved from 70
         },
         ARROWS: {
             id: 'arrows',
             name: 'Arrows',
             amount: 10, // 5-10 random
-            price: 25
+            price: 13 // halved from 25 (rounded)
         },
         CLOAK: {
             id: 'cloak',
             name: 'Cloak',
             damageReduction: 0.3,
-            price: 150,
+            price: 75, // halved from 150
             oneTime: true
         },
         BOMB_ITEM: {
             id: 'bomb_item',
             name: 'Bomb',
-            price: 80
+            price: 40 // halved from 80
         }
     },
     
@@ -217,15 +217,15 @@ const CONFIG = {
     
     // Map settings
     MAP: {
-        OBSTACLES: 100, // trees and rocks (맵이 작아져서 장애물도 감소)
+        OBSTACLES: 100, // trees and rocks
         BUILDINGS: 5, // 5-10 range
-        SHOPS: 3, // 항상 3개
+        SHOPS: 2, // always 2 shops
         MIN_DISTANCE: 80 // minimum distance between objects
     },
     
     // Game settings
     GAME: {
-        SURVIVAL_TIME: 120, // seconds (2분으로 변경)
+        SURVIVAL_TIME: 120, // seconds (2 minutes)
         AUTO_PICKUP_RADIUS: 40,
         MAX_ITEM_SLOTS: 5
     },
@@ -253,8 +253,8 @@ const GameState = {
     timeElapsed: 0,
     hasCloak: false,
     visionBonus: 0,
-    // 통계
-    totalCoinsEarned: 0, // 총 획득 코인
+    // Statistics
+    totalCoinsEarned: 0, // total coins earned
     zombiesKilled: {
         total: 0,
         REGULAR: 0,

@@ -119,6 +119,10 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         const currentSpeed = this.speed * this.speedMultiplier;
         this.setVelocity(velocityX * currentSpeed, velocityY * currentSpeed);
         
+        // Clamp position to world bounds
+        this.x = Phaser.Math.Clamp(this.x, CONFIG.TILE_SIZE, CONFIG.WORLD_SIZE - CONFIG.TILE_SIZE);
+        this.y = Phaser.Math.Clamp(this.y, CONFIG.TILE_SIZE, CONFIG.WORLD_SIZE - CONFIG.TILE_SIZE);
+        
         // Face mouse cursor
         if (pointer) {
             const angle = Phaser.Math.Angle.Between(

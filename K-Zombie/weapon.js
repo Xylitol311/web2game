@@ -102,12 +102,18 @@ class Bomb extends Phaser.Physics.Arcade.Sprite {
         
         this.throwTime = Date.now();
         
-        // Calculate throw velocity
+        // Store target position for precise landing
+        this.targetX = targetX;
+        this.targetY = targetY;
+        
+        // Calculate throw velocity to reach exact target
         const distance = Phaser.Math.Distance.Between(x, y, targetX, targetY);
-        const clampedDistance = Math.min(distance, CONFIG.WEAPONS.BOMB.range);
         const angle = Phaser.Math.Angle.Between(x, y, targetX, targetY);
         
-        const speed = 300;
+        // Calculate speed needed to reach target in fuseTime
+        const timeToTarget = this.fuseTime / 1000; // convert to seconds
+        const speed = distance / timeToTarget;
+        
         this.setVelocity(
             Math.cos(angle) * speed,
             Math.sin(angle) * speed
@@ -124,17 +130,25 @@ class Bomb extends Phaser.Physics.Arcade.Sprite {
         // Update visual position
         this.circle.setPosition(this.x, this.y);
         
-        // Slow down (friction)
-        this.setVelocity(this.body.velocity.x * 0.95, this.body.velocity.y * 0.95);
+        // Check if reached target or time expired
+        const timeElapsed = Date.now() - this.throwTime;
+        
+        // Stop at target position when time is up
+        if (timeElapsed >= this.fuseTime - 50) { // Stop slightly before explosion
+            if (this.targetX !== undefined && this.targetY !== undefined) {
+                this.setPosition(this.targetX, this.targetY);
+            }
+            this.setVelocity(0, 0);
+        }
         
         // Flash effect as it's about to explode
-        const timeLeft = this.fuseTime - (Date.now() - this.throwTime);
+        const timeLeft = this.fuseTime - timeElapsed;
         if (timeLeft < 500) {
             this.circle.setAlpha(Math.sin(Date.now() / 50) * 0.5 + 0.5);
         }
         
         // Check if should explode
-        if (Date.now() - this.throwTime >= this.fuseTime && !this.hasExploded) {
+        if (timeElapsed >= this.fuseTime && !this.hasExploded) {
             this.explode();
         }
     }
@@ -142,7 +156,7 @@ class Bomb extends Phaser.Physics.Arcade.Sprite {
     explode() {
         this.hasExploded = true;
         
-        // 폭발 위치 저장 (데미지 처리용)
+        // Store explosion position for damage calculation
         this.explosionX = this.x;
         this.explosionY = this.y;
         
@@ -163,8 +177,8 @@ class Bomb extends Phaser.Physics.Arcade.Sprite {
             onComplete: () => explosion.destroy()
         });
         
-        // 데미지 처리는 game scene에서 즉시 처리
-        // 100ms 후에 비활성화 (데미지 처리 시간 확보)
+        // Damage handled in game scene
+        // Deactivate after 100ms to ensure damage is processed
         this.scene.time.delayedCall(100, () => {
             this.deactivate();
         });
@@ -216,7 +230,7 @@ class WeaponSystem {
         this.attackPowerMultiplier = 1.0;
         this.buffEndTime = 0;
         
-        // 폭탄 조준 시스템
+        // Bomb aiming system
         this.isAiming = false;
         this.aimStartPos = null;
         this.aimGraphics = this.scene.add.graphics();
@@ -317,8 +331,12 @@ class WeaponSystem {
             damage: weapon.damage * this.attackPowerMultiplier
         };
         
-        // Visual feedback
-        this.drawMeleeArc(hitbox, weapon.id === 'spear' ? 0x8b6f47 : 0xc0c0c0);
+        // Visual feedback with distinct colors and effects
+        if (weapon.id === 'spear') {
+            this.drawSpearAttack(hitbox);
+        } else {
+            this.drawSwordAttack(hitbox);
+        }
         
         // Store for collision detection
         this.currentMeleeHitbox = hitbox;
@@ -337,26 +355,31 @@ class WeaponSystem {
         return true;
     }
     
-    drawMeleeArc(hitbox, color) {
+    drawSpearAttack(hitbox) {
         const graphics = this.scene.add.graphics();
         graphics.setDepth(10);
         
         const startAngle = hitbox.angle - hitbox.arcAngle / 2;
         const endAngle = hitbox.angle + hitbox.arcAngle / 2;
+        const color = 0xd4a944; // golden brown
         
-        // 채워진 호 그리기 (더 명확한 시각화)
-        graphics.fillStyle(color, 0.4);
+        // Narrow cone with thrust effect
+        graphics.fillStyle(color, 0.5);
         graphics.slice(hitbox.x, hitbox.y, hitbox.range, startAngle, endAngle, false);
         graphics.fillPath();
         
-        // 테두리 그리기
-        graphics.lineStyle(4, color, 0.9);
+        // Strong center thrust line
+        graphics.lineStyle(6, 0xffd700, 0.9);
         graphics.beginPath();
-        graphics.arc(hitbox.x, hitbox.y, hitbox.range, startAngle, endAngle);
+        graphics.moveTo(hitbox.x, hitbox.y);
+        graphics.lineTo(
+            hitbox.x + Math.cos(hitbox.angle) * hitbox.range,
+            hitbox.y + Math.sin(hitbox.angle) * hitbox.range
+        );
         graphics.strokePath();
         
-        // 범위 선 그리기
-        graphics.lineStyle(3, color, 0.7);
+        // Side edges
+        graphics.lineStyle(3, color, 0.8);
         graphics.beginPath();
         graphics.moveTo(hitbox.x, hitbox.y);
         graphics.lineTo(
@@ -370,7 +393,76 @@ class WeaponSystem {
         );
         graphics.strokePath();
         
-        // 페이드 아웃 애니메이션
+        // Thrust particles
+        for (let i = 0; i < 3; i++) {
+            const dist = hitbox.range * (0.5 + i * 0.2);
+            const px = hitbox.x + Math.cos(hitbox.angle) * dist;
+            const py = hitbox.y + Math.sin(hitbox.angle) * dist;
+            const particle = this.scene.add.circle(px, py, 3, 0xffd700, 0.8);
+            particle.setDepth(11);
+            
+            this.scene.tweens.add({
+                targets: particle,
+                scale: 0,
+                alpha: 0,
+                duration: 200,
+                delay: i * 50,
+                onComplete: () => particle.destroy()
+            });
+        }
+        
+        this.scene.tweens.add({
+            targets: graphics,
+            alpha: 0,
+            duration: 250,
+            ease: 'Power2',
+            onComplete: () => graphics.destroy()
+        });
+    }
+    
+    drawSwordAttack(hitbox) {
+        const graphics = this.scene.add.graphics();
+        graphics.setDepth(10);
+        
+        const startAngle = hitbox.angle - hitbox.arcAngle / 2;
+        const endAngle = hitbox.angle + hitbox.arcAngle / 2;
+        const color = 0x87ceeb; // light blue
+        
+        // Wide arc slash
+        graphics.fillStyle(color, 0.4);
+        graphics.slice(hitbox.x, hitbox.y, hitbox.range, startAngle, endAngle, false);
+        graphics.fillPath();
+        
+        // Thick arc border
+        graphics.lineStyle(5, 0x4682b4, 0.9);
+        graphics.beginPath();
+        graphics.arc(hitbox.x, hitbox.y, hitbox.range, startAngle, endAngle);
+        graphics.strokePath();
+        
+        // Slash trail effect
+        const midAngle = (startAngle + endAngle) / 2;
+        for (let i = 0; i < 5; i++) {
+            const angle = startAngle + (endAngle - startAngle) * (i / 4);
+            const trailGraphics = this.scene.add.graphics();
+            trailGraphics.setDepth(9);
+            trailGraphics.lineStyle(3, 0xffffff, 0.6);
+            trailGraphics.beginPath();
+            trailGraphics.moveTo(hitbox.x, hitbox.y);
+            trailGraphics.lineTo(
+                hitbox.x + Math.cos(angle) * hitbox.range,
+                hitbox.y + Math.sin(angle) * hitbox.range
+            );
+            trailGraphics.strokePath();
+            
+            this.scene.tweens.add({
+                targets: trailGraphics,
+                alpha: 0,
+                duration: 200,
+                delay: i * 30,
+                onComplete: () => trailGraphics.destroy()
+            });
+        }
+        
         this.scene.tweens.add({
             targets: graphics,
             alpha: 0,
