@@ -1,0 +1,25 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d1810 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: 'Courier New', monospace;
+    overflow: hidden;
+}
+
+#game-container {
+    box-shadow: 0 0 30px rgba(139, 69, 19, 0.5);
+    border: 2px solid #8b4513;
+    border-radius: 4px;
+}
+
+canvas {
+    display: block;
+}
