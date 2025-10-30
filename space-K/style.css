@@ -1,0 +1,194 @@
+/* ============================================
+   전역 스타일
+   ============================================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(to bottom, #0a0e27, #1a1f3a);
+    font-family: 'Arial', sans-serif;
+    overflow: hidden;
+}
+
+/* ============================================
+   게임 컨테이너
+   ============================================ */
+#gameContainer {
+    position: relative;
+    box-shadow: 0 10px 50px rgba(0, 0, 0, 0.5);
+}
+
+canvas {
+    display: block;
+    background: #87CEEB;
+    cursor: crosshair;
+}
+
+/* ============================================
+   인트로 화면
+   ============================================ */
+#intro {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 800px;
+    height: 600px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    text-align: center;
+    z-index: 10;
+}
+
+#intro h1 {
+    font-size: 56px;
+    margin-bottom: 30px;
+    color: #4FC3F7;
+    text-shadow: 0 0 20px rgba(79, 195, 247, 0.5);
+}
+
+#intro p {
+    font-size: 18px;
+    margin: 8px 0;
+    max-width: 600px;
+    line-height: 1.6;
+}
+
+#intro p strong {
+    color: #4FC3F7;
+}
+
+#intro button, #endScreen button {
+    margin-top: 30px;
+    padding: 15px 40px;
+    font-size: 24px;
+    background: #4FC3F7;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: bold;
+}
+
+#intro button:hover, #endScreen button:hover {
+    background: #29B6F6;
+    transform: scale(1.05);
+    box-shadow: 0 5px 20px rgba(79, 195, 247, 0.5);
+}
+
+/* ============================================
+   엔드 화면
+   ============================================ */
+#endScreen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 800px;
+    height: 600px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    text-align: center;
+    z-index: 10;
+}
+
+#endScreen h2 {
+    font-size: 48px;
+    margin-bottom: 30px;
+    text-shadow: 0 0 20px currentColor;
+}
+
+#endScreen p {
+    font-size: 24px;
+    margin: 10px 0;
+}
+
+/* ============================================
+   게임 UI
+   ============================================ */
+#gameUI {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 800px;
+    pointer-events: none;
+}
+
+.ui-bar {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 20px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.ui-bar span {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* ============================================
+   후크 인디케이터
+   ============================================ */
+.hook-indicator {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 32px;
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none;
+}
+
+.hook-indicator.active {
+    opacity: 1;
+    animation: pulse 0.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-50%, -50%) scale(1.2); }
+}
+
+/* ============================================
+   페이드 애니메이션
+   ============================================ */
+.fade-out {
+    animation: fadeOut 0.5s forwards;
+}
+
+@keyframes fadeOut {
+    to { 
+        opacity: 0; 
+        pointer-events: none; 
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s forwards;
+}
+
+@keyframes fadeIn {
+    from { 
+        opacity: 0; 
+    }
+    to { 
+        opacity: 1; 
+    }
+}

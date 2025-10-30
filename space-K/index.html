@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Space-K - Getting Over It 스타일 등반 게임</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="gameContainer">
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
+        
+        <!-- 인트로 화면 -->
+        <div id="intro">
+            <h1>🤖 Space-K</h1>
+            <p>로봇 팔을 마우스로 조종해 우주선까지 등반하세요!</p>
+            <p><strong>조작법:</strong> 마우스를 움직여 팔을 조종</p>
+            <p>팔이 지형에 걸리면 당기거나 밀어서 이동</p>
+            <p>⚠️ 실수하면 바닥까지 떨어질 수 있습니다!</p>
+            <button id="startBtn">게임 시작</button>
+        </div>
+        
+        <!-- 엔드 화면 -->
+        <div id="endScreen" style="display: none;">
+            <h2 id="endTitle">클리어!</h2>
+            <p id="endScore">점수: 0</p>
+            <p id="endHeight">최고 높이: 0%</p>
+            <p id="endTime">소요 시간: 00:00</p>
+            <button id="restartBtn">다시 시작</button>
+        </div>
+        
+        <!-- 게임 UI -->
+        <div id="gameUI" style="display: none;">
+            <div class="ui-bar">
+                <span id="timerDisplay">⏱️ 00:00</span>
+                <span id="heightDisplay">📏 높이: 0%</span>
+                <span id="scoreDisplay">⭐ 점수: 0</span>
+            </div>
+            <div id="hookIndicator" class="hook-indicator">🎯</div>
+        </div>
+    </div>
+
+    <!-- 모듈 스크립트 로드 -->
+    <script src="physics.js"></script>
+    <script src="terrain.js"></script>
+    <script src="robot.js"></script>
+    <script src="renderer.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
