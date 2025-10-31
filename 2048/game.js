@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let gameOver = false;
     let bestScore = localStorage.getItem('bestScore') || 0;
     let nextId = 1;
+    let isAnimating = false;
     bestScoreDisplay.textContent = bestScore;
     
     // Vehicle emoji mapping
@@ -174,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Move tiles in a direction
     function moveTiles(direction) {
-        if (gameOver) return;
+        if (gameOver || isAnimating) return;
 
         const ops = []; // {id, from:{r,c}, to:{r,c}, remove:boolean, merged:boolean, newValue?:number}
         let moved = false;
@@ -271,7 +272,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 updateTilePosition(el, op.to.r, op.to.c);
             });
 
-            const ANIM_MS = 160;
+            const ANIM_MS = 150;
+            isAnimating = true;
             setTimeout(() => {
                 // Apply merges/removals
                 ops.forEach(op => {
@@ -303,6 +305,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     gameOver = true;
                     gameOverDisplay.classList.add('show');
                 }
+                isAnimating = false;
             }, ANIM_MS);
         }
     }
